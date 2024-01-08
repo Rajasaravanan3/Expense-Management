@@ -65,11 +65,11 @@ public class BudgetService {
 
     public void addBudget(BudgetDto budgetDto) {
         
-        if((budgetDto == null) || (budgetDto.getBudgetType() instanceof String && (budgetDto.getBudgetType()).isEmpty())  ||
+        if((budgetDto == null) || (budgetDto.getBudgetType() == null)  ||
             (budgetDto.getBudgetAmount() == 0.0) || (budgetDto.getUserId() == 0)){
 
                 throw new ValidationException("Field value must not be empty", HttpStatus.BAD_REQUEST);
-            }
+        }
 
         budgetRepository.save(this.mapBudgetDtoToBudget(budgetDto));
         
@@ -81,7 +81,7 @@ public class BudgetService {
         try{
             existingBudget = budgetRepository.findByBudgetId(updatedBudgetDto.getBudgetId());
 
-            if(updatedBudgetDto.getBudgetType() instanceof String && ! updatedBudgetDto.getBudgetType().isEmpty())
+            if(updatedBudgetDto.getBudgetType() != null)
                 existingBudget.setBudgetType(updatedBudgetDto.getBudgetType());
 
             if(updatedBudgetDto.getBudgetAmount()!= 0.0)

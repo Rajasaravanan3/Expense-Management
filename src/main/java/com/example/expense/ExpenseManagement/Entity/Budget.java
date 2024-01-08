@@ -2,6 +2,8 @@ package com.example.expense.ExpenseManagement.Entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,7 +18,8 @@ public class Budget {
     private int budgetId;
     
     @Column(nullable = false)
-    private String budgetType;
+    @Enumerated(EnumType.STRING)
+    private BudgetType budgetType;
 
     @Column(nullable = false)
     private double budgetAmount;
@@ -41,11 +44,11 @@ public class Budget {
         this.budgetId = budgetId;
     }
 
-    public String getBudgetType() {
+    public BudgetType getBudgetType() {
         return budgetType;
     }
 
-    public void setBudgetType(String budgetType) {
+    public void setBudgetType(BudgetType budgetType) {
         this.budgetType = budgetType;
     }
 
@@ -59,9 +62,9 @@ public class Budget {
     
     public Budget(){}
 
-    public Budget(int budgetId, String budgetName, double budgetAmount) {
+    public Budget(int budgetId, BudgetType budgetType, double budgetAmount) {
         this.budgetId = budgetId;
-        this.budgetType = budgetName;
+        this.budgetType = budgetType;
         this.budgetAmount = budgetAmount;
     }
 

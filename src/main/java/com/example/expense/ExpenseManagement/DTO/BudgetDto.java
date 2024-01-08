@@ -1,15 +1,18 @@
 package com.example.expense.ExpenseManagement.DTO;
 
+import com.example.expense.ExpenseManagement.Controller.BudgetController;
+import com.example.expense.ExpenseManagement.Entity.BudgetType;
+
 public class BudgetDto {
 
     private int budgetId;
-    private String budgetType;
+    private BudgetType budgetType;
     private double budgetAmount;
     private int userId;
 
     public BudgetDto(){}
 
-    public BudgetDto(int budgetId, String budgetType, double budgetAmount, int userId) {
+    public BudgetDto(int budgetId, BudgetType budgetType, double budgetAmount, int userId) {
         
         this.budgetId = budgetId;
         this.budgetType = budgetType;
@@ -25,11 +28,11 @@ public class BudgetDto {
         this.budgetId = budgetId;
     }
 
-    public String getBudgetType() {
+    public BudgetType getBudgetType() {
         return budgetType;
     }
 
-    public void setBudgetType(String budgetType) {
+    public void setBudgetType(BudgetType budgetType) {
         this.budgetType = budgetType;
     }
 

@@ -1,5 +1,7 @@
 package com.example.expense.ExpenseManagement.Entity;
 
+import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,7 +21,7 @@ public class Expense {
     private double amount;
 
     @Column(nullable = false)
-    private String date;
+    private Date date;
     private String description;
     
 
@@ -63,11 +65,11 @@ public class Expense {
         this.amount = amount;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

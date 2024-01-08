@@ -1,6 +1,7 @@
 package com.example.expense.ExpenseManagement.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.dozer.DozerBeanMapper;
@@ -8,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.example.expense.ExpenseManagement.DTO.BudgetDto;
 import com.example.expense.ExpenseManagement.DTO.ExpenseDto;
+import com.example.expense.ExpenseManagement.Entity.Budget;
 import com.example.expense.ExpenseManagement.Entity.Expense;
+import com.example.expense.ExpenseManagement.Repository.BudgetRepository;
 import com.example.expense.ExpenseManagement.Repository.CategoryRepository;
 import com.example.expense.ExpenseManagement.Repository.CurrencyRepository;
 import com.example.expense.ExpenseManagement.Repository.ExpenseRepository;
@@ -23,6 +27,9 @@ public class ExpenseService {
     
     @Autowired
     private ExpenseRepository expenseRepository;
+
+    @Autowired
+    private BudgetRepository budgetRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -78,20 +85,48 @@ public class ExpenseService {
         return this.mapExpenseToExpenseDto(expense);
     }
 
-    public void addExpense(ExpenseDto expenseDto) {
+    public String addExpense(ExpenseDto expenseDto) {
 
-        try {
-            if(expenseDto == null || expenseDto.getAmount() == 0.0 || (expenseDto.getDate() == null || expenseDto.getDate().isEmpty()) || 
+        String returnMessage = "sd";
+        // try {
+            if(expenseDto == null || expenseDto.getAmount() == 0.0 || (expenseDto.getDate() == null || expenseDto.getDate() == null) || 
                 expenseDto.getCategoryId() == 0 || expenseDto.getCurrencyId() == 0 || expenseDto.getPaymentMethodId() == 0 || 
-                expenseDto.getUserId() == 0)
+                expenseDto.getUserId() == 0) {
 
                     throw new ValidationException("Non nullable Field value must not be empty", HttpStatus.BAD_REQUEST);
-        }
-        catch (Exception e) {
-            throw new ApplicationException("An unexpected error occurred while adding expense");
-        }
+            }
+            
+            long lastOneWeekExpenses = (long) expenseDto.getAmount() + this.getSumOfLastSevenDaysExpenses(expenseDto.getUserId());
+            long lastOneMonthExpenses = (long) expenseDto.getAmount() + this.getSumOfLastOneMonthExpenses(expenseDto.getUserId());
+            long lastOneYearExpenses = (long) expenseDto.getAmount() + this.getSumOfLastOneYearExpenses(expenseDto.getUserId());
+            List<Budget> budgets = new ArrayList<>();
+            System.out.println("lastOneWeekExpenses "+lastOneWeekExpenses);
+
+            budgets = budgetRepository.findBudgetsByUserId(expenseDto.getUserId());
+
+            for (Budget budget : budgets) {
+                
+                if(String.valueOf(budget.getBudgetType()).equalsIgnoreCase("WEEKLY") && lastOneWeekExpenses > (long) budget.getBudgetAmount()) {
+                    returnMessage = "You've surpassed your weekly budget limit";
+                    break;
+                }
+                else if(String.valueOf(budget.getBudgetType()).equalsIgnoreCase("MONTHLY") && lastOneMonthExpenses > (long) budget.getBudgetAmount()) {
+                    returnMessage = "You've surpassed your monthly budget limit";
+                    break;
+                }
+                else if(String.valueOf(budget.getBudgetType()).equalsIgnoreCase("YEARLY") && lastOneYearExpenses > (long) budget.getBudgetAmount()) {
+                    returnMessage = "You've surpassed your yearly budget limit";
+                    break;
+                }
+            }
+        // }
+        // catch (Exception e) {
+        //     // throw new ApplicationException("An unexpected error occurred while adding expense");
+        //     System.out.println("sdfgjklxc,s");
+        // } 
 
         expenseRepository.save(this.mapExpenseDtoToExpense(expenseDto));
+        return returnMessage;   //if string is not empty then display message as a notification
     }
 
     public void deleteExpenseById(int expenseId) {
@@ -113,7 +148,7 @@ public class ExpenseService {
             if(updatedExpense.getAmount() != 0.0)
                 existingExpense.setAmount(updatedExpense.getAmount());
 
-            if(updatedExpense.getDate() instanceof String && updatedExpense.getDate().isEmpty())
+            if(updatedExpense.getDate() != null)
                 existingExpense.setDate(updatedExpense.getDate());
 
             if(updatedExpense.getDescription() instanceof String && updatedExpense.getDescription().isEmpty())
@@ -134,8 +169,22 @@ public class ExpenseService {
         catch (Exception e) {
             throw new ApplicationException("An unexpected error occured while updating the expense");
         }
-
         expenseRepository.save(existingExpense);
+    }
+
+    public long getSumOfLastSevenDaysExpenses(int userId) {
+
+        return expenseRepository.findSumOfLastSevenDaysExpenses(userId);
+    }
+
+    public long getSumOfLastOneMonthExpenses(int userId) {
+
+        return expenseRepository.findSumOfLastOneMonthExpenses(userId);
+    }
+
+    public long getSumOfLastOneYearExpenses(int userId) {
+
+        return expenseRepository.findSumOfLastOneYearExpenses(userId);
     }
     
 

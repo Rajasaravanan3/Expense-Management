@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import com.example.expense.ExpenseManagement.Service.UserService;
 
 @RestController
 @RequestMapping("/expenses")
+@CrossOrigin
 public class ExpenseController {
     
     @Autowired
@@ -61,9 +63,9 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addExpense(@RequestBody ExpenseDto expenseDto) {
-        expenseService.addExpense(expenseDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<String> addExpense(@RequestBody ExpenseDto expenseDto) {
+        
+        return new ResponseEntity<>(expenseService.addExpense(expenseDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{expenseId}")
@@ -86,6 +88,7 @@ public class ExpenseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    //error
     @GetMapping("/category")
     public ResponseEntity<List<ExpenseDto>> getByCategory() {
 
@@ -116,6 +119,7 @@ public class ExpenseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    //error
     @GetMapping("/category/{categoryName}")
     public ResponseEntity<List<ExpenseDto>> getByCategoryName(@PathVariable("categoryName") String categoryName) {
         
@@ -136,6 +140,7 @@ public class ExpenseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    //error
     @GetMapping("/payment/{paymentMethodName}")
     public ResponseEntity<List<ExpenseDto>> getByPaymentMethodName(@PathVariable("paymentMethodName") String paymentMethodName) {
 

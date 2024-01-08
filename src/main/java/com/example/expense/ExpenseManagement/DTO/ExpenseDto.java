@@ -1,10 +1,12 @@
 package com.example.expense.ExpenseManagement.DTO;
 
+import java.util.Date;
+
 public class ExpenseDto {
     
     private int expenseId;
     private double amount;
-    private String date;
+    private Date date;
     private String description;
 
     private int userId;
@@ -30,11 +32,11 @@ public class ExpenseDto {
         this.amount = amount;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
