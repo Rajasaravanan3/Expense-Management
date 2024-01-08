@@ -1,0 +1,18 @@
+add user in category table
+
+no need for delete all
+
+in put mapping get category id from updated category  not in url path
+
+queryparam for getCategories    // @RequestParam
+
+enum for default category for every user
+
+
+UI ->   login
+        user wise display expenses
+                  categories
+                  budgets starts with 0.0
+
+
+dozermapper -> entity to dto// xmlconfiguration
