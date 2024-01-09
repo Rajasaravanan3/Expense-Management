@@ -38,6 +38,9 @@ public class BudgetService {
                 throw new ValidationException("No record found for the given userId", HttpStatus.NOT_FOUND);
             }
         }
+        catch(ValidationException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ApplicationException("An unexpected Error occurred while retrieving");
         }
@@ -56,6 +59,9 @@ public class BudgetService {
             if(budget == null)
                 throw new ValidationException("There is no record for the given budgetId.", HttpStatus.NOT_FOUND);
         }
+        catch(ValidationException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ApplicationException("An unexpected Error occurred while retrieving");
         }
@@ -65,10 +71,18 @@ public class BudgetService {
 
     public void addBudget(BudgetDto budgetDto) {
         
-        if((budgetDto == null) || (budgetDto.getBudgetType() == null)  ||
-            (budgetDto.getBudgetAmount() == 0.0) || (budgetDto.getUserId() == 0)){
+        try {
+            if((budgetDto == null) || (budgetDto.getBudgetType() == null)  ||
+                (budgetDto.getBudgetAmount() == 0.0) || (budgetDto.getUserId() == 0)){
 
                 throw new ValidationException("Field value must not be empty", HttpStatus.BAD_REQUEST);
+        }
+        }
+        catch(ValidationException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new ApplicationException("An unexpected error occurred while saving");
         }
 
         budgetRepository.save(this.mapBudgetDtoToBudget(budgetDto));

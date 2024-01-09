@@ -18,23 +18,8 @@ public interface ExpenseRepository extends JpaRepository<Expense, Integer> {
 
 
 
-    @Query("Select COALESCE(SUM(e.amount), 0) from Expense e inner join e.user u where u.userId = :userId  and e.date >= FUNCTION('DATE_SUB', CURRENT_DATE, 6)")
-    long findSumOfLastSevenDaysExpenses(@Param("userId") int userId);
-
-    @Query("Select COALESCE(SUM(e.amount), 0) from Expense e inner join e.user u where u.userId = :userId and e.date >= FUNCTION('DATE_SUB', CURRENT_DATE, 30)")
-    int findSumOfLastOneMonthExpenses(@Param("userId") int userId);
-
-    @Query("Select COALESCE(SUM(e.amount), 0) from Expense e inner join e.user u where u.userId = :userId and e.date >= FUNCTION('DATE_SUB', CURRENT_DATE, 365)")
-    int findSumOfLastOneYearExpenses(@Param("userId") int userId);
-    
-
-
-
-
     @Query("Select e from Expense e inner join e.category c where c.categoryName = :categoryName")
     List<Expense> findByCategoryName(@Param("categoryName") String categoryName);
-    @Query("Select e from Expense e inner join e.category c group by c.categoryName")
-    List<Expense> findByCategory();
 
     @Query("Select e from Expense e inner join e.currency c where c.currencyCode = :currencyCode")
     List<Expense> findByCurrencyCode(@Param("currencyCode") String currencyCode);

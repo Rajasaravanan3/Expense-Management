@@ -18,7 +18,21 @@ public class CurrencyService {
     private CurrencyRepository currencyRepository;
 
     public List<Currency> getALlCurrencies(){
-        return currencyRepository.findAll();
+
+        List<Currency> currencyList = null;
+        try {
+            currencyList = currencyRepository.findAll();
+            if(currencyList == null) {
+                throw new ValidationException("No record found", HttpStatus.NOT_FOUND);
+            }
+        }
+        catch(ValidationException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new ApplicationException("An unexpected Error occurred while retrieving");
+        }
+        return currencyList;
     }
 
     public Currency displayCurrencyById(int currencyId){
@@ -31,7 +45,11 @@ public class CurrencyService {
             if(currency == null) {
                 throw new ValidationException("No record found for the given currencyId", HttpStatus.NOT_FOUND);
             }
-        } catch (Exception e) {
+        }
+        catch(ValidationException e) {
+            throw e;
+        }
+        catch (Exception e) {
             throw new ApplicationException("An unexpected error occured while retrieving the currency");
         }
 
@@ -48,7 +66,11 @@ public class CurrencyService {
             if(currency == null) {
                 throw new ValidationException("No record found for the given currencyId", HttpStatus.NOT_FOUND);
             }
-        } catch (Exception e) {
+        }
+        catch(ValidationException e) {
+            throw e;
+        }
+        catch (Exception e) {
             throw new ApplicationException("An unexpected error occured while retrieving the currency");
         }
 
@@ -58,9 +80,11 @@ public class CurrencyService {
     public void addCurrency(Currency currency){
 
         try {
-            if(currency == null || currency.getCurrencyId() == 0 || 
-            (currency.getCurrencyCode() instanceof String && currency.getCurrencyCode().isEmpty()))
+            if(currency == null || (currency.getCurrencyCode() instanceof String && currency.getCurrencyCode().isEmpty()))
                 throw new ValidationException("Non nullable Field value must not be empty", HttpStatus.BAD_REQUEST);
+        }
+        catch(ValidationException e) {
+            throw e;
         }
         catch (Exception e) {
             throw new ApplicationException("An unexpected error occurred while saving");

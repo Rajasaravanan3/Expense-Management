@@ -38,6 +38,9 @@ public class CategoryService {
                 throw new ValidationException("No record found for the user " + userId, HttpStatus.NOT_FOUND);
             }
         }
+        catch(ValidationException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ApplicationException("An unexpected error occured");
         }
@@ -59,6 +62,9 @@ public class CategoryService {
                 throw new ValidationException("No record found for the given categoryId", HttpStatus.NOT_FOUND);
             }
         }
+        catch(ValidationException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ApplicationException("An unexpected error occured");
         }
@@ -72,9 +78,13 @@ public class CategoryService {
             category = categoryRepository.findByCategoryName(categoryName);
 
             if(category == null) {
-                throw new ValidationException("No record found for the given categoryId", HttpStatus.NOT_FOUND);
+                throw new ValidationException("No record found for the given categoryName", HttpStatus.NOT_FOUND);
             }
-        } catch (Exception e) {
+        }
+        catch(ValidationException e) {
+            throw e;
+        }
+        catch (Exception e) {
             throw new ApplicationException("An unexpected error occured");
         }
         return this.mapCategoryToCategoryDto(category);
@@ -83,14 +93,18 @@ public class CategoryService {
     public void addCategory(CategoryDto categoryDto) {
 
         try {
-            if(categoryDto == null || categoryDto.getCategoryId() == 0 || categoryDto.getUserId() == 0 ||
-                (categoryDto.getCategoryName() instanceof String || categoryDto.getCategoryName().isEmpty())) {
+            // if(categoryDto == null || categoryDto.getUserId() == 0 ||
+            //     (categoryDto.getCategoryName() instanceof String || categoryDto.getCategoryName().isEmpty())) {
 
-                throw new ValidationException("Non nullable Field value must not be empty", HttpStatus.BAD_REQUEST);
-            }
+            //     throw new ValidationException("Non nullable Field value must not be empty", HttpStatus.BAD_REQUEST);
+            // }
             categoryRepository.save(this.mapCategoryDtoToCategory(categoryDto));
 
-        } catch (Exception e) {
+        }
+        catch(ValidationException e) {
+            throw e;
+        }
+        catch (Exception e) {
             throw new ApplicationException("An unexpected error occurred while saving");
         }
     }
@@ -109,7 +123,11 @@ public class CategoryService {
                 existingCategory.setDescription(updatedCategoryDto.getDescription());
 
             
-        } catch (Exception e) {
+        }
+        catch(ValidationException e) {
+            throw e;
+        }
+        catch (Exception e) {
             throw new ApplicationException("An unexpected error occured while updating");
         }
 

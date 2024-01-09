@@ -1,7 +1,6 @@
 package com.example.expense.ExpenseManagement.Service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.dozer.DozerBeanMapper;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.example.expense.ExpenseManagement.DTO.BudgetDto;
 import com.example.expense.ExpenseManagement.DTO.ExpenseDto;
 import com.example.expense.ExpenseManagement.Entity.Budget;
 import com.example.expense.ExpenseManagement.Entity.Expense;
@@ -61,6 +59,9 @@ public class ExpenseService {
                 throw new ValidationException("No record found for the user " + userId, HttpStatus.NOT_FOUND);
             }
         }
+        catch(ValidationException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ApplicationException("An error occurred while getting the expense list for the user "+ userId);
         }
@@ -79,6 +80,9 @@ public class ExpenseService {
                 throw new ValidationException("No record found for the expenseId " + expenseId, HttpStatus.NOT_FOUND);
             }
         }
+        catch(ValidationException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ApplicationException(ERROR_MESSAGE);
         }
@@ -87,8 +91,8 @@ public class ExpenseService {
 
     public String addExpense(ExpenseDto expenseDto) {
 
-        String returnMessage = "sd";
-        // try {
+        String returnMessage = "";
+        try {
             if(expenseDto == null || expenseDto.getAmount() == 0.0 || (expenseDto.getDate() == null || expenseDto.getDate() == null) || 
                 expenseDto.getCategoryId() == 0 || expenseDto.getCurrencyId() == 0 || expenseDto.getPaymentMethodId() == 0 || 
                 expenseDto.getUserId() == 0) {
@@ -96,34 +100,13 @@ public class ExpenseService {
                     throw new ValidationException("Non nullable Field value must not be empty", HttpStatus.BAD_REQUEST);
             }
             
-            long lastOneWeekExpenses = (long) expenseDto.getAmount() + this.getSumOfLastSevenDaysExpenses(expenseDto.getUserId());
-            long lastOneMonthExpenses = (long) expenseDto.getAmount() + this.getSumOfLastOneMonthExpenses(expenseDto.getUserId());
-            long lastOneYearExpenses = (long) expenseDto.getAmount() + this.getSumOfLastOneYearExpenses(expenseDto.getUserId());
-            List<Budget> budgets = new ArrayList<>();
-            System.out.println("lastOneWeekExpenses "+lastOneWeekExpenses);
-
-            budgets = budgetRepository.findBudgetsByUserId(expenseDto.getUserId());
-
-            for (Budget budget : budgets) {
-                
-                if(String.valueOf(budget.getBudgetType()).equalsIgnoreCase("WEEKLY") && lastOneWeekExpenses > (long) budget.getBudgetAmount()) {
-                    returnMessage = "You've surpassed your weekly budget limit";
-                    break;
-                }
-                else if(String.valueOf(budget.getBudgetType()).equalsIgnoreCase("MONTHLY") && lastOneMonthExpenses > (long) budget.getBudgetAmount()) {
-                    returnMessage = "You've surpassed your monthly budget limit";
-                    break;
-                }
-                else if(String.valueOf(budget.getBudgetType()).equalsIgnoreCase("YEARLY") && lastOneYearExpenses > (long) budget.getBudgetAmount()) {
-                    returnMessage = "You've surpassed your yearly budget limit";
-                    break;
-                }
-            }
-        // }
-        // catch (Exception e) {
-        //     // throw new ApplicationException("An unexpected error occurred while adding expense");
-        //     System.out.println("sdfgjklxc,s");
-        // } 
+        }
+        catch(ValidationException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new ApplicationException("An unexpected error occurred while adding expense");
+        }
 
         expenseRepository.save(this.mapExpenseDtoToExpense(expenseDto));
         return returnMessage;   //if string is not empty then display message as a notification
@@ -166,48 +149,15 @@ public class ExpenseService {
             if(updatedExpense.getPaymentMethod() != null)
                 existingExpense.setPaymentMethod(updatedExpense.getPaymentMethod());
         }
+        catch(ValidationException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ApplicationException("An unexpected error occured while updating the expense");
         }
         expenseRepository.save(existingExpense);
     }
 
-    public long getSumOfLastSevenDaysExpenses(int userId) {
-
-        return expenseRepository.findSumOfLastSevenDaysExpenses(userId);
-    }
-
-    public long getSumOfLastOneMonthExpenses(int userId) {
-
-        return expenseRepository.findSumOfLastOneMonthExpenses(userId);
-    }
-
-    public long getSumOfLastOneYearExpenses(int userId) {
-
-        return expenseRepository.findSumOfLastOneYearExpenses(userId);
-    }
-    
-
-    public List<ExpenseDto> getByCategory() {
-
-        List<Expense> expenseList = null;
-        List<ExpenseDto> expenseDtoList = new ArrayList<>();
-
-        try {
-            expenseList = expenseRepository.findByCategory();
-            if(expenseList == null) {
-                throw new ValidationException(EMPTY_RECORD, HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (Exception e) {
-            throw new ApplicationException(ERROR_MESSAGE);
-        }
-        
-        for(Expense expense : expenseList) {
-            expenseDtoList.add(this.mapExpenseToExpenseDto(expense));
-        }
-        return expenseDtoList;
-    }
 
     public List<ExpenseDto> getByAmountSpentHigherToLower() {
 
@@ -219,6 +169,9 @@ public class ExpenseService {
             if(expenseList == null) {
                 throw new ValidationException(EMPTY_RECORD, HttpStatus.NOT_FOUND);
             }
+        }
+        catch(ValidationException e) {
+            throw e;
         }
         catch (Exception e) {
             throw new ApplicationException(ERROR_MESSAGE);
@@ -241,6 +194,9 @@ public class ExpenseService {
                 throw new ValidationException(EMPTY_RECORD, HttpStatus.NOT_FOUND);
             }
         }
+        catch(ValidationException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ApplicationException(ERROR_MESSAGE);
         }
@@ -261,6 +217,9 @@ public class ExpenseService {
             if(expenseList == null) {
                 throw new ValidationException(EMPTY_RECORD, HttpStatus.NOT_FOUND);
             }
+        }
+        catch(ValidationException e) {
+            throw e;
         }
         catch (Exception e) {
             throw new ApplicationException(ERROR_MESSAGE);
@@ -283,6 +242,9 @@ public class ExpenseService {
                 throw new ValidationException(EMPTY_RECORD, HttpStatus.NOT_FOUND);
             }
         }
+        catch(ValidationException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ApplicationException(ERROR_MESSAGE);
         }
@@ -303,6 +265,9 @@ public class ExpenseService {
             if(expenseList == null) {
                 throw new ValidationException(EMPTY_RECORD, HttpStatus.NOT_FOUND);
             }
+        }
+        catch(ValidationException e) {
+            throw e;
         }
         catch (Exception e) {
             throw new ApplicationException(ERROR_MESSAGE);

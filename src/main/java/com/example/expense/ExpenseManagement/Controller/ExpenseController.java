@@ -40,6 +40,7 @@ public class ExpenseController {
     @Autowired
     private CurrencyService currencyService;
 
+    @Autowired
     private PaymentMethodService paymentMethodService;
 
     @GetMapping
@@ -88,17 +89,6 @@ public class ExpenseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    //error
-    @GetMapping("/category")
-    public ResponseEntity<List<ExpenseDto>> getByCategory() {
-
-        List<ExpenseDto> expenseDtoList = expenseService.getByCategory();
-        if(expenseDtoList != null) {
-            return new ResponseEntity<>(expenseDtoList, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
     @GetMapping("/amount-spent")
     public ResponseEntity<List<ExpenseDto>> getByAmountSpentHigherToLower() {
 
@@ -119,7 +109,6 @@ public class ExpenseController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    //error
     @GetMapping("/category/{categoryName}")
     public ResponseEntity<List<ExpenseDto>> getByCategoryName(@PathVariable("categoryName") String categoryName) {
         

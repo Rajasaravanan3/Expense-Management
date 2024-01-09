@@ -28,8 +28,11 @@ public class UserService {
         try {
             user = userRepository.findByUserId(userId);
             if(user == null) {
-                throw new ValidationException("No record found for the given userId", HttpStatus.NOT_FOUND);
+                throw new ValidationException("No record found for the given userId ", HttpStatus.NOT_FOUND);
             }
+        }
+        catch(ValidationException e) {
+            throw e;
         }
         catch (Exception e) {
             throw new ApplicationException("An unexpected error occured while retrieving the user");
@@ -47,6 +50,9 @@ public class UserService {
                 throw new ValidationException("No record found for the given email", HttpStatus.NOT_FOUND);
             }
         }
+        catch(ValidationException e) {
+            throw e;
+        }
         catch (Exception e) {
             throw new ApplicationException("An unexpected error occured while retrieving the userId");
         }
@@ -61,6 +67,9 @@ public class UserService {
                 (user.getUsername() instanceof String && user.getUsername().isEmpty()))
                     
                 throw new ValidationException("Non nullable Field value must not be empty", HttpStatus.BAD_REQUEST);
+        }
+        catch(ValidationException e) {
+            throw e;
         }
         catch (Exception e) {
             throw new ApplicationException("An unexpected error occurred while saving");

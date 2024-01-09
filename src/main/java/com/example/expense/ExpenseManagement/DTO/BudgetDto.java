@@ -1,6 +1,5 @@
 package com.example.expense.ExpenseManagement.DTO;
 
-import com.example.expense.ExpenseManagement.Controller.BudgetController;
 import com.example.expense.ExpenseManagement.Entity.BudgetType;
 
 public class BudgetDto {
